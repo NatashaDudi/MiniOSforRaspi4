@@ -379,20 +379,28 @@ void main() {
         if ( ( ch = getUart() ) ) {
             movePointer(ourField, ch);
             drawChar(ch, 50, 50, 0x0f, 3);
+            // keyboard: c, d, e -> up
             if (ch == 's') {
-            drawString((WIDTH/2)-252, (HEIGHT/2), "you just pushed the Number 9", 0x0f, 20);
+            drawString((WIDTH/2)-252, (HEIGHT/2), "you went up", 0x0f, 20);
+            } else if (ch == '3') {
+                // keyboard: s, d, f -> right
+                drawString((WIDTH/2)-252, (HEIGHT/2), "you went to the right", 0x0f, 20);
+            } else if (ch == 'Q') {
+                // keyboard: e, d, c -> down
+                drawString((WIDTH/2)-252, (HEIGHT/2), "you went down", 0x0f, 20);
+            } else if (ch == ';') {
+                // keyboard: t, g, b -> down
+                drawString((WIDTH/2)-252, (HEIGHT/2), "you choose a field", 0x0f, 20);
+            } else {
+                // keyboard: f, d, s -> left
+                drawString((WIDTH/2)-252, (HEIGHT/2), "you went to the left", 0x0f, 20);
+                shoot(oldPoint);
             }
-            if (ch == '3') {
-            drawString((WIDTH/2)-252, (HEIGHT/2), "you just pushed left", 0x0f, 20);
-            }
-            if (ch == '1') {
-            shoot(oldPoint);
-            }
+
         }
 
    
    
-        */
         uart_loadOutputFifo();
 
         i++;
