@@ -15,8 +15,6 @@
     y (0,1)
 */
 
-// JO jo test command plz delete me 
-
 #define FIELD_SIZE      80
 #define WAVE_RADIUS     10
 #define WAVE_LENGTH     2 * WAVE_RADIUS
@@ -30,6 +28,8 @@ struct GameField {
 };
 
 struct GameField oldPoint;
+int xPos;
+int yPos;
 
 int boats = 9;
 
@@ -90,12 +90,9 @@ void drawBoat(struct GameField field) {
     }
 }
 
-void drawWaves(struct GameField field, int offsetX, int offsetY, int amountOfWaves, int darkerColor, int brighterColor) {
     for (int i = 0; i < amountOfWaves; i++) {
-        drawCircle(field.x + i * WAVE_LENGTH + offsetX + WAVE_RADIUS, field.y + offsetY + WAVE_RADIUS + 1, WAVE_RADIUS, brighterColor, 1);
     }
     for (int i = 0; i < amountOfWaves; i++) {
-        drawCircle(field.x + i * WAVE_LENGTH + offsetX + WAVE_RADIUS, field.y + offsetY + WAVE_RADIUS + 5, WAVE_RADIUS, darkerColor, 1);
     }
 }
 
@@ -111,19 +108,11 @@ void drawFieldColors(struct GameField field) {
 
         for (int i = 0; i < 4; i++) {
            for (int j = 0; j < 5; j++) {
-                drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, BLUE, LIGHT_BLUE_STRONG);
             }
         }
 
         // drawing white base line
         drawRect(field.x, field.y, field.x + FIELD_SIZE, field.y + FIELD_SIZE, WHITE, 0);
-    } else {
-        for (int i = 0; i < 4; i++) {
-           for (int j = 0; j < 5; j++) {
-                drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, GREY, LIGHT_GREY);
-            }
-        }
-    }
 }
 
 void drawDesign2 (struct GameField field) {
@@ -219,13 +208,65 @@ void placeBoat(struct GameField field){
 void shoot(struct GameField field){
 	//Sets a tile to the used ones
 	field.wasFound = 1;
+    if(isHit(field) == 1){
+        boats--;
+    }
 }
 
 void enemyPlacement(struct GameField field[10][10]){
 	for(int b = 0; b<10; b++){
 		
+    /*
+	for(int b = 1; b<10; b++){
+		if(b+1 < 10){
+			field[b-1][b+1].hasBoat = 1;
+			drawBoat(field[b-1][b+1]);
+		}else{
+			field[b-1][b].hasBoat = 1;
+			drawBoat(field[b-1][b]);
+		}
+	}
+    */
+    field[0][0].hasBoat = 1;
+    field[8][1].hasBoat = 1;
+    field[4][4].hasBoat = 1;
+    field[6][4].hasBoat = 1;
+    field[9][9].hasBoat = 1;
+    field[7][2].hasBoat = 1;
+    field[3][7].hasBoat = 1;
+    field[4][2].hasBoat = 1;
+    field[4][7].hasBoat = 1;
+    field[6][6].hasBoat = 1;
+
+}
+
+int loser(struct GameField field[10][10]){
+	int sum = 0;
+	for(int i = 0; i<10; i++){
+		for(int j = 0; j < 10; j++){
+			if( field[i][j].wasFound == 1 ){
+				if(&& field[i][j].hasBoat == 1){
+                    sum++;
+                }
+			}
+		}
+	}
+	if(sum >= 10){
+		return 1;
+	}else{
+		return 0;
 	}
 }
+
+void movePointer(struct GameField field[10][10], int richtung){
+    switch(richtung) : 
+        case 1:  pointer(field[xPos+1][yPos]);
+        case 2:  pointer(field[xPos-1][yPos]);
+        case 3:  pointer(field[xPos][yPos+1]);
+        case 4:  pointer(field[xPos][yPos-1]);
+}
+
+
 
 //=============================================================================================================
 
@@ -298,27 +339,46 @@ void main() {
     // margin tests
     //drawMarginAroundField(ourField[1][1], MARGIN_FIELD);
     
+    enemyPlacement(fieldOfOpponent);
+    enemyPlacement(ourField);
     drawBoat(ourField[9][0]);
 
     int i = 0;
     int j = 0;
+    int t = 0;
     int gameStillOn = 1;
     while (gameStillOn) {
     	drawString((WIDTH/2)-252, MARGIN-5, "Ships left: ", 0x0f, 3);
     	drawChar(boats + 0x30, (WIDTH/2), MARGIN-5, 0x0f, 3); 
 
         if (i == 16) {i=0;}
-        if (j == 10) {j=0;}
         wait_msec(480000); // Wait a little...
         //wait_msec(4000); // Wait a little...
         drawChar(i + 0x30, (WIDTH/2)-252 + (8*8*3), MARGIN-25, 0x0f, 3);
 
         drawRect(100, 600, 350, 700, colors[i], 1);	
-	pointer(ourField[j][j]);
+	    pointer(ourField[j][t]);
+        xPos = j;
+        yPos = t;
+        shoot(oldPoint);
+
+	
+	
         i++;
-   	j++;
-   
-    }
-   
+        if(j == 9){
+            if(t == 9){
+                    t=0;
+                }else{
+                    t++;
+            }
+            j=0;
+        }else{
+            j++;
+        }
+        
+        if(loser(ourField) == 1){
+            drawString((WIDTH/2)-252, (HEIGHT/2), "GAME OVER", 0x0f, 20);
+        }
+    }   
     while (1);
 }
