@@ -375,7 +375,7 @@ void main() {
 
         if ( ( ch = getUart() ) ) {
             movePointer(ourField, ch);
-            drawChar(ch, 50, 50, 3);
+            drawChar(ch, 50, 50, 0x0f, 3);
         if (ch == '9') {
             drawString((WIDTH/2)-252, (HEIGHT/2), "you just pushed the Number 9", 0x0f, 20);
         }
