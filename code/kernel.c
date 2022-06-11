@@ -15,6 +15,8 @@
     y (0,1)
 */
 
+// JO jo test command plz delete me 
+
 #define FIELD_SIZE      80
 #define WAVE_RADIUS     10
 #define WAVE_LENGTH     2 * WAVE_RADIUS
