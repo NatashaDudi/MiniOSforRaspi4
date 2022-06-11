@@ -371,8 +371,12 @@ void main() {
         drawChar(i + 0x30, (WIDTH/2)-252 + (8*8*3), MARGIN-25, 0x0f, 3);
 
         drawRect(100, 600, 350, 700, colors[i], 1);	
-        uart_writeText("Hello world!\n");
+        uart_writeText("1");
 
+        ch = getUart();
+        drawChar(ch, 50, 50, 0x0f, 3);
+
+        /*
         if ( ( ch = getUart() ) ) {
             movePointer(ourField, ch);
             drawChar(ch, 50, 50, 0x0f, 3);
@@ -386,13 +390,14 @@ void main() {
             shoot(oldPoint);
         }
         }
+        */
         uart_loadOutputFifo();
-	
+
         i++;
         if(loser(ourField) == 1){
             drawString((WIDTH/2)-252, (HEIGHT/2), "GAME OVER", 0x0f, 20);
         }
-        uart_update();
+        //uart_update();
     }   
     while (1);
 }
