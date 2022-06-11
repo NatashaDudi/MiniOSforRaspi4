@@ -312,7 +312,7 @@ void main() {
     
     // initialisation for the connection with I/O
     uart_init();
-    uart_writeText("Hello world!\n");
+   
     fb_init();
 
 
@@ -371,7 +371,7 @@ void main() {
         drawChar(i + 0x30, (WIDTH/2)-252 + (8*8*3), MARGIN-25, 0x0f, 3);
 
         drawRect(100, 600, 350, 700, colors[i], 1);	
-
+        uart_writeText("Hello world!\n");
 
         if ( ( ch = getUart() ) ) {
             movePointer(ourField, ch);
@@ -392,6 +392,7 @@ void main() {
         if(loser(ourField) == 1){
             drawString((WIDTH/2)-252, (HEIGHT/2), "GAME OVER", 0x0f, 20);
         }
+        uart_update();
     }   
     while (1);
 }
