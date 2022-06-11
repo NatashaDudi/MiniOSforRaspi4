@@ -322,8 +322,7 @@ void main() {
 
     // Test des outputs:
 
-    drawPixel(50, 50, 0x0f);
-    
+        
     drawRect(300, 400, 500, 500, 0x11, 0);
     
      
@@ -373,16 +372,18 @@ void main() {
 
         drawRect(100, 600, 350, 700, colors[i], 1);	
 
-       
-        shoot(oldPoint);
 
         if ( ( ch = getUart() ) ) {
             movePointer(ourField, ch);
+            drawChar(ch, 50, 50, 3);
         if (ch == '9') {
             drawString((WIDTH/2)-252, (HEIGHT/2), "you just pushed the Number 9", 0x0f, 20);
         }
         if (ch == 'h') {
             drawString((WIDTH/2)-252, (HEIGHT/2), "you just pushed the letter h", 0x0f, 20);
+        }
+        if (ch == 'e') {
+            shoot(oldPoint);
         }
         }
         uart_loadOutputFifo();
