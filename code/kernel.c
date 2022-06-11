@@ -269,11 +269,12 @@ int loser(struct GameField field[10][10]){
 }
 
 void movePointer(struct GameField field[10][10], char richtung){
-    switch(richtung) : 
+    switch(richtung){ 
         case 'd':  pointer(field[xPos+1][yPos]); break;
         case 'a':  pointer(field[xPos-1][yPos]); break;
         case 'w':  pointer(field[xPos][yPos+1]); break;
         case 's':  pointer(field[xPos][yPos-1]); break;
+    }
 }
 
 
