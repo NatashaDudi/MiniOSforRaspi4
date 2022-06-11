@@ -311,6 +311,7 @@ void main() {
     
     // initialisation for the connection with I/O
     uart_init();
+    uart_writeText("Hello world!\n");
     fb_init();
 
 
@@ -378,7 +379,7 @@ void main() {
 
         }
         if (ch == 'h') {
-            
+
         }
         }
         uart_loadOutputFifo();
