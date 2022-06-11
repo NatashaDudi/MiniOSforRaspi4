@@ -268,12 +268,12 @@ int loser(struct GameField field[10][10]){
 	}
 }
 
-void movePointer(struct GameField field[10][10], int richtung){
+void movePointer(struct GameField field[10][10], char richtung){
     switch(richtung) : 
-        case 1:  pointer(field[xPos+1][yPos]);
-        case 2:  pointer(field[xPos-1][yPos]);
-        case 3:  pointer(field[xPos][yPos+1]);
-        case 4:  pointer(field[xPos][yPos-1]);
+        case 'd':  pointer(field[xPos+1][yPos]); break;
+        case 'a':  pointer(field[xPos-1][yPos]); break;
+        case 'w':  pointer(field[xPos][yPos+1]); break;
+        case 's':  pointer(field[xPos][yPos-1]); break;
 }
 
 
@@ -374,6 +374,7 @@ void main() {
         shoot(oldPoint);
 
         if ( ( ch = getUart() ) ) {
+            movePointer(ourField, ch);
         if (ch == '9') {
 
         }
@@ -384,17 +385,6 @@ void main() {
         uart_loadOutputFifo();
 	
         i++;
-        if(j == 9){
-            if(t == 9){
-                    t=0;
-                }else{
-                    t++;
-            }
-            j=0;
-        }else{
-            j++;
-        }
-        
         if(loser(ourField) == 1){
             drawString((WIDTH/2)-252, (HEIGHT/2), "GAME OVER", 0x0f, 20);
         }
