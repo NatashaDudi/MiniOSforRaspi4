@@ -373,23 +373,25 @@ void main() {
         drawRect(100, 600, 350, 700, colors[i], 1);	
         uart_writeText("1");
 
-        ch = getUart();
-        drawChar(ch, 50, 50, 0x0f, 3);
+        
 
-        /*
+        
         if ( ( ch = getUart() ) ) {
             movePointer(ourField, ch);
             drawChar(ch, 50, 50, 0x0f, 3);
-        if (ch == '9') {
+            if (ch == 's') {
             drawString((WIDTH/2)-252, (HEIGHT/2), "you just pushed the Number 9", 0x0f, 20);
-        }
-        if (ch == 'h') {
-            drawString((WIDTH/2)-252, (HEIGHT/2), "you just pushed the letter h", 0x0f, 20);
-        }
-        if (ch == 'e') {
+            }
+            if (ch == '3') {
+            drawString((WIDTH/2)-252, (HEIGHT/2), "you just pushed left", 0x0f, 20);
+            }
+            if (ch == '1') {
             shoot(oldPoint);
+            }
         }
-        }
+
+   
+   
         */
         uart_loadOutputFifo();
 
