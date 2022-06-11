@@ -90,15 +90,17 @@ void drawBoat(struct GameField field) {
     }
 }
 
+void drawWaves(struct GameField field, int offsetX, int offsetY, int amountOfWaves, int darkerColor, int brighterColor) {
     for (int i = 0; i < amountOfWaves; i++) {
+        drawCircle(field.x + i * WAVE_LENGTH + offsetX + WAVE_RADIUS, field.y + offsetY + WAVE_RADIUS + 1, WAVE_RADIUS, brighterColor, 1);
     }
     for (int i = 0; i < amountOfWaves; i++) {
+        drawCircle(field.x + i * WAVE_LENGTH + offsetX + WAVE_RADIUS, field.y + offsetY + WAVE_RADIUS + 5, WAVE_RADIUS, darkerColor, 1);
     }
 }
 
 
 void drawFieldColors(struct GameField field) {
-
     // drawing blue background
     drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE - 1, BLUE, 1);
 
@@ -108,11 +110,19 @@ void drawFieldColors(struct GameField field) {
 
         for (int i = 0; i < 4; i++) {
            for (int j = 0; j < 5; j++) {
+                drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, BLUE, LIGHT_BLUE_STRONG);
             }
         }
 
         // drawing white base line
         drawRect(field.x, field.y, field.x + FIELD_SIZE, field.y + FIELD_SIZE, WHITE, 0);
+    } else {
+        for (int i = 0; i < 4; i++) {
+           for (int j = 0; j < 5; j++) {
+                drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, GREY, LIGHT_GREY);
+            }
+        }
+    }
 }
 
 void drawDesign2 (struct GameField field) {
@@ -237,15 +247,15 @@ void enemyPlacement(struct GameField field[10][10]){
     field[4][2].hasBoat = 1;
     field[4][7].hasBoat = 1;
     field[6][6].hasBoat = 1;
-
+    }
 }
 
 int loser(struct GameField field[10][10]){
 	int sum = 0;
 	for(int i = 0; i<10; i++){
 		for(int j = 0; j < 10; j++){
-			if( field[i][j].wasFound == 1 ){
-				if(&& field[i][j].hasBoat == 1){
+			if(field[i][j].wasFound == 1 ){
+				if(field[i][j].hasBoat == 1){
                     sum++;
                 }
 			}
@@ -342,6 +352,7 @@ void main() {
     enemyPlacement(fieldOfOpponent);
     enemyPlacement(ourField);
     drawBoat(ourField[9][0]);
+    unsigned char ch = 0;
 
     int i = 0;
     int j = 0;
@@ -362,7 +373,15 @@ void main() {
         yPos = t;
         shoot(oldPoint);
 
-	
+        if ( ( ch = getUart() ) ) {
+        if (ch == '9') {
+
+        }
+        if (ch == 'h') {
+            
+        }
+        }
+        uart_loadOutputFifo();
 	
         i++;
         if(j == 9){
