@@ -360,6 +360,8 @@ void main() {
     int j = 0;
     int t = 0;
     int gameStillOn = 1;
+    xPos = j;
+    yPos = t;
     while (gameStillOn) {
     	drawString((WIDTH/2)-252, MARGIN-5, "Ships left: ", 0x0f, 3);
     	drawChar(boats + 0x30, (WIDTH/2), MARGIN-5, 0x0f, 3); 
@@ -370,9 +372,8 @@ void main() {
         drawChar(i + 0x30, (WIDTH/2)-252 + (8*8*3), MARGIN-25, 0x0f, 3);
 
         drawRect(100, 600, 350, 700, colors[i], 1);	
-	    pointer(ourField[j][t]);
-        xPos = j;
-        yPos = t;
+
+       
         shoot(oldPoint);
 
         if ( ( ch = getUart() ) ) {
