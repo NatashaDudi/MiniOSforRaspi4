@@ -2,76 +2,62 @@
 #include "io.h"
 
 // The screen
-#define WIDTH         1920
-#define HEIGHT        1080
-#define MARGIN        30
-#define VIRTWIDTH     (WIDTH-(2*MARGIN))
-#define FONT_BPG      8
+#define WIDTH           1920
+#define HEIGHT          1080
+#define MARGIN          30
 
-// For the bricks
-#define ROWS          5
-#define COLS          10
-unsigned int bricks = ROWS * COLS;
+/*  
+    Screens work like this:
+      (0,0)  -----> x 
+    |           (1,0)
+    |
+    |
+    y (0,1)
+*/
 
-// Gameplay
-#define NUM_LIVES     3
+#define FIELD_SIZE      80
+#define WAVE_RADIUS     10
+#define WAVE_LENGTH     2 * WAVE_RADIUS
+#define MARGIN_FIELD    10
 
-// OBJECT TRACKING
-
-struct Object
-{
-    unsigned int type;
-    unsigned int x;
-    unsigned int y;
-    unsigned int width;
-    unsigned int height;
-    unsigned char alive;
+struct GameField {
+    int hasBoat; //1 for yes, 0 for no
+    int wasFound; //1 for yes, 0 for no
+    unsigned int x; // x value on the screen
+    unsigned int y; // y value on the screen
 };
 
-enum {
-    OBJ_NONE   = 0,
-    OBJ_BRICK  = 1,
-    OBJ_PADDLE = 2,
-    OBJ_BALL   = 3
-};
+struct GameField oldPoint;
 
-unsigned int numobjs = 0;
-struct Object *objects = (struct Object *)SAFE_ADDRESS;
-struct Object *ball;
-struct Object *paddle;
+int boats = 9;
 
-void removeObject(struct Object *object)
-{
-    drawRect(object->x, object->y, object->x + object->width, object->y + object->height, 0, 1);
-    object->alive = 0;
-}
-
-void moveObject(struct Object *object, int xoff, int yoff)
-{
-    moveRect(object->x, object->y, object->width, object->height, xoff, yoff, 0x00);
-    object->x = object->x + xoff;
-    object->y = object->y + yoff;
-}
-
-struct Object *detectCollision(struct Object *with, int xoff, int yoff)
-{
-    for (int i=0; i<numobjs;i++) {
-	if (&objects[i] != with && objects[i].alive == 1) {
-	   if (with->x + xoff > objects[i].x + objects[i].width || objects[i].x > with->x + xoff + with->width) {
-              // with is too far left or right to ocllide
-	   } else if (with->y + yoff > objects[i].y + objects[i].height || objects[i].y > with->y + yoff + with->height) {
-              // with is too far up or down to ocllide
-	   } else {
-	      // Collision!
-	      return &objects[i];
-	   }
+void initializeGameField(struct GameField field[10][10]) {
+    for (int i = 0; i < 10; i++) {
+        for (int j= 0; j < 10; j++) {
+            field[i][j].hasBoat = 0;
+            field[i][j].wasFound = 0;
+            field[i][j].x = 0; // has to be changed to the x value of the field
+            field[i][j].y = 0; // has to be changed to the y value of the field
         }
     }
-    return 0;
 }
 
-// KEY HANDLER
 
+enum {
+    BLUE   = 0x11,
+    GREEN = 0x22,
+    LIGHT_BLUE_STRONG  = 0x33,
+    LIGHT_GREEN = 0xAA,
+    LIGHT_BLUE = 0x99,
+    LIGHT_BLUE_COLD = 0xBB,
+    ORANGE = 0x66,
+    BLACK = 0x00,
+    LIGHT_GREY = 0x77,
+    GREY = 0x88,
+    WHITE   = 0xFF
+};
+
+// KEY HANDLER
 unsigned char getUart()
 {
     unsigned char ch = 0;
@@ -80,155 +66,257 @@ unsigned char getUart()
     return ch;
 }
 
-// OBJECT INITIALISERS
+void drawBoat(struct GameField field) {
+    // draw blue background
+    drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE -1, BLUE, 1);
 
-void initBricks()
-{
-    int brickwidth = 32;
-    int brickheight = 8;
-    int brickspacer = 20;
-    static int brickcols[] = { 0x11, 0x22, 0xEE, 0x44, 0x66 };
-
-    int ybrick = MARGIN + brickheight;
-
-    for (int i=0; i<ROWS; i++) {
-       int xbrick = MARGIN + (VIRTWIDTH/COLS/2) - (brickwidth/2);
-        
-       for (int j = 0; j<COLS; j++) {
-          drawRect(xbrick, ybrick, xbrick+brickwidth, ybrick+brickheight, brickcols[i], 1);
-
-	  objects[numobjs].type = OBJ_BRICK;
-	  objects[numobjs].x = xbrick;
-	  objects[numobjs].y = ybrick;
-	  objects[numobjs].width = brickwidth;
-	  objects[numobjs].height = brickheight;
-	  objects[numobjs].alive = 1;
-	  numobjs++;
-
-          xbrick += (VIRTWIDTH/COLS);
-        }
-        ybrick = ybrick + brickspacer;
-     }
-}
-
-void initBall()
-{
-    int ballradius = 15;
-
-    drawCircle(WIDTH/2, HEIGHT/2, ballradius, 0x55, 1);
-
-    objects[numobjs].type = OBJ_BALL;
-    objects[numobjs].x = (WIDTH/2) - ballradius;
-    objects[numobjs].y = (HEIGHT/2) - ballradius;
-    objects[numobjs].width = ballradius * 2;
-    objects[numobjs].height = ballradius * 2;
-    objects[numobjs].alive = 1;
-    ball = &objects[numobjs];
-    numobjs++;
-}
-
-void initPaddle()
-{
-    int paddlewidth = 80;
-    int paddleheight = 20;
-
-    drawRect((WIDTH-paddlewidth)/2, (HEIGHT-MARGIN-paddleheight), (WIDTH-paddlewidth)/2 + paddlewidth, (HEIGHT-MARGIN), 0x11, 1);
-
-    objects[numobjs].type = OBJ_PADDLE;
-    objects[numobjs].x = (WIDTH-paddlewidth)/2;
-    objects[numobjs].y = (HEIGHT-MARGIN-paddleheight);
-    objects[numobjs].width = paddlewidth;
-    objects[numobjs].height = paddleheight;
-    objects[numobjs].alive = 1;
-    paddle = &objects[numobjs];
-    numobjs++;
-}
-
-void drawScoreboard(int score, int lives)
-{
-    char tens = score / 10; score -= (10 * tens);
-    char ones = score;
-
-    drawString((WIDTH/2)-252, MARGIN-25, "Score: 0     Lives:  ", 0x0f, 3);
-    drawChar(tens + 0x30, (WIDTH/2)-252 + (8*8*3), MARGIN-25, 0x0f, 3);
-    drawChar(ones + 0x30, (WIDTH/2)-252 + (8*9*3), MARGIN-25, 0x0f, 3);
-    drawChar((char)lives + 0x30, (WIDTH/2)-252 + (8*20*3), MARGIN-25, 0x0f, 3);
-}
-
-void main()
-{
-    struct Object *foundObject;
-    unsigned char ch = 0;
-
-    int lives = NUM_LIVES;
-    int points = 0;
+    // draw bottom part of the boat (0x66 == ORANGE)
+    for (int i = 0; i < 2; i++) {
+        drawCircle(field.x + 20 + i * 40, field.y + 60, 10, ORANGE, 1);
+        drawRect(field.x + 10 + i * 40, field.y + 50, field.x + 30 + i * 40, field.y + 60, BLUE, 1);
+    }
+    drawRect(field.x + 20, field.y + 60, field.x + 60, field.y + 70, ORANGE, 1);
     
-    int velocity_x = 1;
-    int velocity_y = 3;
 
+    // draw sail and mast twice
+    for (int i = 0; i < 2; i++) {
+        // draw a circle and get rid of one half
+        drawCircle(field.x + 50 - i * 20, field.y + 30, 20, WHITE, 1);
+        drawRect(field.x + 30 - i * 20, field.y + 10, field.x + 50 - i * 20, field.y + 50, BLUE, 1);
+        // add line for mast
+        drawRect(field.x + 50 - i * 20, field.y + 50, field.x + 52 - i * 20, field.y + 60, WHITE, 1);
+    }
+}
+
+void drawWaves(struct GameField field, int offsetX, int offsetY, int amountOfWaves, int darkerColor, int brighterColor) {
+    for (int i = 0; i < amountOfWaves; i++) {
+        drawCircle(field.x + i * WAVE_LENGTH + offsetX + WAVE_RADIUS, field.y + offsetY + WAVE_RADIUS + 1, WAVE_RADIUS, brighterColor, 1);
+    }
+    for (int i = 0; i < amountOfWaves; i++) {
+        drawCircle(field.x + i * WAVE_LENGTH + offsetX + WAVE_RADIUS, field.y + offsetY + WAVE_RADIUS + 5, WAVE_RADIUS, darkerColor, 1);
+    }
+}
+
+
+void drawFieldColors(struct GameField field) {
+
+    // drawing blue background
+    drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE - 1, BLUE, 1);
+
+    // if field was not found yet than there are some waves 
+    if (field.wasFound == 0) {
+    
+
+        for (int i = 0; i < 4; i++) {
+           for (int j = 0; j < 5; j++) {
+                drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, BLUE, LIGHT_BLUE_STRONG);
+            }
+        }
+
+        // drawing white base line
+        drawRect(field.x, field.y, field.x + FIELD_SIZE, field.y + FIELD_SIZE, WHITE, 0);
+    } else {
+        for (int i = 0; i < 4; i++) {
+           for (int j = 0; j < 5; j++) {
+                drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, GREY, LIGHT_GREY);
+            }
+        }
+    }
+}
+
+void drawDesign2 (struct GameField field) {
+    for (int i = 0; i < 2; i++) {
+        drawRect(field.x, field.y + i * 2 * WAVE_LENGTH, field.x + FIELD_SIZE, field.y + WAVE_RADIUS + i * 2 * WAVE_LENGTH, BLUE, 1);
+        drawRect(field.x, field.y + 1 * WAVE_RADIUS + i * 2 * WAVE_LENGTH, field.x + FIELD_SIZE, field.y + 3 * WAVE_RADIUS + i * 2 * WAVE_LENGTH, LIGHT_BLUE, 1);
+        drawRect(field.x, field.y + 3 * WAVE_RADIUS + i * 2 * WAVE_LENGTH, field.x + FIELD_SIZE, field.y + 4 * WAVE_RADIUS + i * 2 * WAVE_LENGTH, BLUE, 1);
+    }
+
+    // drawing waves
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (i % 2 == 0) {
+                if (j % 2 == 0) {
+                    drawCircle(field.x + i * WAVE_LENGTH + WAVE_RADIUS, field.y + j * WAVE_LENGTH + WAVE_RADIUS, WAVE_RADIUS, LIGHT_BLUE, 1);
+                } else {
+                    drawCircle(field.x + i * WAVE_LENGTH + WAVE_RADIUS, field.y + j * WAVE_LENGTH + WAVE_RADIUS, WAVE_RADIUS, BLUE, 1);
+                }
+            } else {
+                if (j % 2 == 0) {
+                    drawCircle(field.x + i * WAVE_LENGTH + WAVE_RADIUS, field.y + j * WAVE_LENGTH + WAVE_RADIUS, WAVE_RADIUS, BLUE, 1);
+                } else {
+                    drawCircle(field.x + i * WAVE_LENGTH + WAVE_RADIUS, field.y + j * WAVE_LENGTH + WAVE_RADIUS, WAVE_RADIUS, LIGHT_BLUE, 1);
+                }                
+            }
+        }
+    }
+}
+
+void drawDesign2Margin () {
+    struct GameField field;
+    field.x = 0;
+    field.y = 1000;
+    for (int i = 0; i < 24; i++) {
+       drawDesign2(field);
+       field.x = field.x + FIELD_SIZE;
+    }
+}
+
+void drawBoardGame (struct GameField board[10][10], unsigned int offset, unsigned int offsetY) {
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            int xValue = i * FIELD_SIZE + offset;
+            int yValue = j * FIELD_SIZE + offsetY;
+
+            // put values in array for the boardgame
+            board[i][j].x = xValue; 
+            board[i][j].y = yValue;
+            drawFieldColors(board[i][j]);
+        }
+    }
+}
+
+void drawMarginAroundField(struct GameField field, int thicknessOfMargin) {
+    int xValue = field.x;
+    int yValue = field.y;
+    // right rectangle of the margin
+    drawRect(xValue, yValue, xValue + thicknessOfMargin, yValue + FIELD_SIZE, WHITE, 1);
+    // left rectangle of the margin
+    drawRect(xValue + FIELD_SIZE - thicknessOfMargin, yValue, xValue + FIELD_SIZE, yValue + FIELD_SIZE, WHITE, 1);
+    // upper rectangle of the margin
+    drawRect(xValue, yValue, xValue + FIELD_SIZE, yValue + thicknessOfMargin, WHITE, 1);
+    // lower rectangle of the margin
+    drawRect(xValue, yValue + FIELD_SIZE - thicknessOfMargin, xValue + FIELD_SIZE, yValue + FIELD_SIZE, WHITE, 1);
+
+}
+
+//============GAMELOGIK=====================================================================================
+
+void pointer(struct GameField field){
+	//Highlights the curentle selectet tile.
+	//checks if there is already a Highliter via an invisible tile.
+	if(oldPoint.x != 0){
+		//draws the ourField design to remove the last highliter
+		drawFieldColors(oldPoint);
+			
+	}
+	//draws the new Highliter
+	drawMarginAroundField(field, 10);
+	oldPoint = field;
+}
+
+int isHit(struct GameField field){
+	//checks if there is a Boat
+	return field.hasBoat;
+}
+
+void placeBoat(struct GameField field){
+	//Places a boat
+	field.hasBoat = 1;
+}
+
+void shoot(struct GameField field){
+	//Sets a tile to the used ones
+	field.wasFound = 1;
+}
+
+void enemyPlacement(struct GameField field[10][10]){
+	for(int b = 0; b<10; b++){
+		
+	}
+}
+
+//=============================================================================================================
+
+void main() {
+    // creating an array with colors available
+    static int colors[] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
+
+    // two arrays with random numbers since we cannot add user C libraries to kernels.
+    int random1[] = {8,50,74,59,31,73,45,79,24,10,41,66,93,43,88,4,28,30,41,13,4,70,10,
+    58,61,34,100,79,17,36,98,27,13,68,11,34,80,50,80,22,68,73,94,37,86,46,29,92,95,58,
+    2,54,9,45,69,91,25,97,31,4,23,67,50,25,2,54,78,9,29,34,99,82,36,14,66,15,64,37,26,
+    70,16,95,30,2,18,96,6,5,52,99,89,24,6,83,53,67,17,38,39,45};
+
+    int random2[] = {3,1,1,2,2,0,0,2,3,1,0,1,0,2,3,3,3,1,0,0,3,1,1,1,0,1,3,2,0,3,1,2,0,
+    3,2,1,3,1,3,1,3,0,1,0,1,1,0,3,2,1,1,1,0,0,0,2,0,0,2,3,2,2,1,0,1,1,1,0,0,1,2,1,3,1,
+    1,2,3,0,1,1,3,2,1,1,1,3,1,0,3,2,0,3,1,2,0,2,0,1,2,0};
+    
+    oldPoint.hasBoat = 0;
+    oldPoint.wasFound = 0;
+    oldPoint.x=0; 
+    oldPoint.y=0;
+
+    
+    // initializing the players field
+    struct GameField ourField[10][10];
+    initializeGameField(ourField);
+
+    // initializing the field of the opponent
+    struct GameField fieldOfOpponent[10][10];
+    initializeGameField(fieldOfOpponent);
+
+    
+    // initialisation for the connection with I/O
     uart_init();
     fb_init();
 
-    initBricks();
-    initBall();
-    initPaddle();
-    drawScoreboard(points, lives);
 
-    while (!getUart()); // Wait for keypress to start game
+    // TO DO: necessary to give the player the opportunity to choose his/her fields here.
+    // TO DO: add ships in the opponents fields.
+    // TO DO: start game in loop
+
+    // Test des outputs:
+
+    drawPixel(50, 50, 0x0f);
+    
+    drawRect(300, 400, 500, 500, 0x11, 0);
+    
      
-    while (lives > 0 && bricks > 0) {
-       // Get any waiting input and flush the buffer
-       if ( ( ch = getUart() ) ) {
-	  if (ch == 'l') if (paddle->x + paddle->width + (paddle->width / 2) <= WIDTH-MARGIN) moveObject(paddle, paddle->width / 2, 0);
-	  if (ch == 'h') if (paddle->x >= MARGIN+(paddle->width / 2)) moveObject(paddle, -(paddle->width / 2), 0);
-       }
-       uart_loadOutputFifo();
+    drawChar('A', 700, 700, 0x0f, 10);  
+    drawChar('B', 700, 750, 0x0f, 10);  
+    
+    drawString((WIDTH/2)-252, MARGIN-25, "Battleship >:D", 0x0f, 3);
+ 
 
-       // Are we going to hit anything?
-       foundObject = detectCollision(ball, velocity_x, velocity_y);
 
-       if (foundObject) {
-          if (foundObject == paddle) {
-             velocity_y = -velocity_y;
-	     // Are we going to hit the side of the paddle
-	     if (ball->x + ball->width + velocity_x == paddle->x || ball->x + velocity_x == paddle->x + paddle->width) velocity_x = -velocity_x;
-          } else if (foundObject->type == OBJ_BRICK) {
-             removeObject(foundObject);
-             velocity_y = -velocity_y;
-             bricks--;
-             points++;
-             drawScoreboard(points, lives);
-          }
-       }
 
-       wait_msec(4000); // Wait a little...
-       moveObject(ball, velocity_x, velocity_y);
 
-       // Check we're in the game arena still
-       if (ball->x + ball->width >= WIDTH-MARGIN) {
-          velocity_x = -velocity_x;
-       } else if (ball->x <= MARGIN) {
-          velocity_x = -velocity_x;
-       } else if (ball->y + ball->height >= HEIGHT-MARGIN) {
-          lives--;
+    // calculating the offset by the half of the screen (540 or 960) minus half of the boardgame (400)
+    int offsetY = (HEIGHT/2) - (FIELD_SIZE * 10 / 2);
+    int offsetX = ((WIDTH/2) - (FIELD_SIZE * 10)) /2;
+    
+    // board of player is drawn here:
+    drawBoardGame(ourField, offsetX, offsetY);
 
-	  removeObject(ball);
-	  removeObject(paddle);
+    // board of opponent is drawn here:
+    drawBoardGame(fieldOfOpponent, offsetX + WIDTH/2, offsetY);
 
-          initBall();
-          initPaddle();
-          drawScoreboard(points, lives);
-       } else if (ball->y <= MARGIN) {
-          velocity_y = -velocity_y;
-       }
+    drawDesign2Margin();
+
+    // margin tests
+    //drawMarginAroundField(ourField[1][1], MARGIN_FIELD);
+    
+    drawBoat(ourField[9][0]);
+
+    int i = 0;
+    int j = 0;
+    int gameStillOn = 1;
+    while (gameStillOn) {
+    	drawString((WIDTH/2)-252, MARGIN-5, "Ships left: ", 0x0f, 3);
+    	drawChar(boats + 0x30, (WIDTH/2), MARGIN-5, 0x0f, 3); 
+
+        if (i == 16) {i=0;}
+        if (j == 10) {j=0;}
+        wait_msec(480000); // Wait a little...
+        //wait_msec(4000); // Wait a little...
+        drawChar(i + 0x30, (WIDTH/2)-252 + (8*8*3), MARGIN-25, 0x0f, 3);
+
+        drawRect(100, 600, 350, 700, colors[i], 1);	
+	pointer(ourField[j][j]);
+        i++;
+   	j++;
+   
     }
-
-    int zoom = WIDTH/192;
-    int strwidth = 10 * FONT_BPG * zoom;
-    int strheight = FONT_BPG * zoom;
-
-    if (bricks == 0) drawString((WIDTH/2)-(strwidth/2), (HEIGHT/2)-(strheight/2), "Well done!", 0x02, zoom);
-    else drawString((WIDTH/2)-(strwidth/2), (HEIGHT/2)-(strheight/2), "Game over!", 0x04, zoom);
-
+   
     while (1);
 }

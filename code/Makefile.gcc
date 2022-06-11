@@ -1,3 +1,7 @@
+# Code from: https://github.com/isometimes/rpi4-osdev
+# Explanations for flags from: https://gcc.gnu.org/onlinedocs/gcc and https://stackoverflow.com/questions/17692428/what-is-ffreestanding-option-in-gcc
+# Comments by Natasha can be found in the other makefile since the exact same instructions happen in both makefiles with different compilers. 
+
 CFILES = $(wildcard *.c)
 OFILES = $(CFILES:.c=.o)
 GCCFLAGS = -Wall -O2 -ffreestanding -nostdinc -nostdlib -nostartfiles
