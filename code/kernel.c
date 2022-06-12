@@ -1,3 +1,8 @@
+// Code by https://github.com/isometimes/rpi4-osdev
+// Comments by Adrian, Natasha
+// Game logic by Adrian
+// Visual Game Design by Natasha
+
 #include "fb.h"
 #include "io.h"
 
@@ -21,6 +26,7 @@
 #define MARGIN_FIELD    10
 
 struct GameField {
+    int isOpponent; // 1 for yes, 0 for no
     int hasBoat; //1 for yes, 0 for no
     int wasFound; //1 for yes, 0 for no
     unsigned int x; // x value on the screen
@@ -33,9 +39,14 @@ int yPos;
 
 int boats = 9;
 
-void initializeGameField(struct GameField field[10][10]) {
+void initializeGameField(struct GameField field[10][10], int isOpponent) {
     for (int i = 0; i < 10; i++) {
         for (int j= 0; j < 10; j++) {
+            if (isOpponent) {
+                field[i][j].isOpponent = 1;
+            } else {
+                field[i][j].isOpponent = 0;
+            }
             field[i][j].hasBoat = 0;
             field[i][j].wasFound = 0;
             field[i][j].x = 0; // has to be changed to the x value of the field
@@ -68,23 +79,23 @@ unsigned char getUart()
     return ch;
 }
 
-void drawBoat(struct GameField field) {
+void drawBoat(struct GameField field, int backgroundColor, int boatColor) {
     // draw blue background
-    drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE -1, BLUE, 1);
+    drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE -1, backgroundColor, 1);
 
     // draw bottom part of the boat (0x66 == ORANGE)
     for (int i = 0; i < 2; i++) {
-        drawCircle(field.x + 20 + i * 40, field.y + 60, 10, ORANGE, 1);
-        drawRect(field.x + 10 + i * 40, field.y + 50, field.x + 30 + i * 40, field.y + 60, BLUE, 1);
+        drawCircle(field.x + 20 + i * 40, field.y + 60, 10, boatColor, 1);
+        drawRect(field.x + 10 + i * 40, field.y + 50, field.x + 30 + i * 40, field.y + 60, backgroundColor, 1);
     }
-    drawRect(field.x + 20, field.y + 60, field.x + 60, field.y + 70, ORANGE, 1);
+    drawRect(field.x + 20, field.y + 60, field.x + 60, field.y + 70, boatColor, 1);
     
 
     // draw sail and mast twice
     for (int i = 0; i < 2; i++) {
         // draw a circle and get rid of one half
         drawCircle(field.x + 50 - i * 20, field.y + 30, 20, WHITE, 1);
-        drawRect(field.x + 30 - i * 20, field.y + 10, field.x + 50 - i * 20, field.y + 50, BLUE, 1);
+        drawRect(field.x + 30 - i * 20, field.y + 10, field.x + 50 - i * 20, field.y + 50, backgroundColor, 1);
         // add line for mast
         drawRect(field.x + 50 - i * 20, field.y + 50, field.x + 52 - i * 20, field.y + 60, WHITE, 1);
     }
@@ -105,23 +116,45 @@ void drawFieldColors(struct GameField field) {
     drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE - 1, BLUE, 1);
 
     // if field was not found yet than there are some waves 
+
     if (field.wasFound == 0) {
     
-
-        for (int i = 0; i < 4; i++) {
-           for (int j = 0; j < 5; j++) {
-                drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, BLUE, LIGHT_BLUE_STRONG);
+        if (field.isOpponent) {
+            if (field.hasBoat) {
+                drawBoat(field, BLUE, ORANGE);
+            } else {
+                // if the opponent has no boat on this field than waves will be shown
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, BLUE, LIGHT_BLUE_STRONG);
+                    }
+                }
+            }
+        } else {
+            // if it is our field than no boats will be shown
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 5; j++) {
+                    drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, BLUE, LIGHT_BLUE_STRONG);
+                }
             }
         }
 
         // drawing white base line
         drawRect(field.x, field.y, field.x + FIELD_SIZE, field.y + FIELD_SIZE, WHITE, 0);
     } else {
-        for (int i = 0; i < 4; i++) {
-           for (int j = 0; j < 5; j++) {
-                drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, GREY, LIGHT_GREY);
+        // field.wasFound == 1 means that the field was chosen. If there was a boat, it will be shown.
+        if (field.hasBoat) {
+            drawBoat(field, GREY, LIGHT_GREY);
+            // TO DO: draw attack symbol
+        } else {
+            for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 5; j++) {
+                    drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, GREY, LIGHT_GREY);
+                }
             }
+            // TO DO: draw attack symbol
         }
+
     }
 }
 
@@ -323,11 +356,11 @@ void main() {
     
     // initializing the players field
     struct GameField ourField[10][10];
-    initializeGameField(ourField);
+    initializeGameField(ourField, 0);
 
     // initializing the field of the opponent
     struct GameField fieldOfOpponent[10][10];
-    initializeGameField(fieldOfOpponent);
+    initializeGameField(fieldOfOpponent, 1);
 
     
     // initialisation for the connection with I/O
@@ -372,7 +405,7 @@ void main() {
     
     enemyPlacement(fieldOfOpponent);
     enemyPlacement(ourField);
-    drawBoat(ourField[9][0]);
+    drawBoat(ourField[9][0], BLUE, ORANGE);
     unsigned char ch = 0;
 
     int i = 0;
