@@ -3,6 +3,11 @@
 // N: not needed anymore
 // #define SAFE_ADDRESS    0x00210000 // Somewhere safe to store a lot of data
 
+unsigned int gpio_call();
+unsigned int gpio_set();
+unsigned int gpio_clear();
+unsigned int gpio_pull();
+unsigned int gpio_function();
 void uart_init();
 void uart_writeText(char *buffer);
 void uart_loadOutputFifo();

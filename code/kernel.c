@@ -270,10 +270,30 @@ int loser(struct GameField field[10][10]){
 
 void movePointer(struct GameField field[10][10], char richtung){
     switch(richtung){ 
-        case 'd':  pointer(field[xPos+1][yPos]); break;
-        case 'a':  pointer(field[xPos-1][yPos]); break;
-        case 'w':  pointer(field[xPos][yPos+1]); break;
-        case 's':  pointer(field[xPos][yPos-1]); break;
+        case 'Q':  if(xPos != 9){
+                        pointer(field[xPos+1][yPos]);
+                    }else{
+                        pointer(field[0][yPos]);
+                    } 
+                   break;
+        case 's':   if(xPos != 0){
+                        pointer(field[xPos-1][yPos]);
+                    }else{
+                        pointer(field[9][yPos]);
+                    }
+                    break;
+        case '3':   if(yPos != 9){
+                        pointer(field[xPos][yPos+1]);
+                    }else{
+                        pointer(field[xPos][0]);
+                    }
+                    break;
+        case ';':   if(yPos != 0){
+                        pointer(field[xPos][yPos-1]);
+                    }else{
+                        pointer(field[xPos][9]);
+                    }
+                    break;
     }
 }
 
