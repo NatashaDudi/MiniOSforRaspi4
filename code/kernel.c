@@ -42,11 +42,7 @@ int boats = 9;
 void initializeGameField(struct GameField field[10][10], int isOpponent) {
     for (int i = 0; i < 10; i++) {
         for (int j= 0; j < 10; j++) {
-            if (isOpponent) {
-                field[i][j].isOpponent = 1;
-            } else {
-                field[i][j].isOpponent = 0;
-            }
+            field[i][j].isOpponent = isOpponent;
             field[i][j].hasBoat = 0;
             field[i][j].wasFound = 0;
             field[i][j].x = 0; // has to be changed to the x value of the field
@@ -119,17 +115,8 @@ void drawFieldColors(struct GameField field) {
 
     if (field.wasFound == 0) {
     
-        if (field.isOpponent) {
-            if (field.hasBoat) {
-                drawBoat(field, BLUE, ORANGE);
-            } else {
-                // if the opponent has no boat on this field than waves will be shown
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 5; j++) {
-                        drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, BLUE, LIGHT_BLUE_STRONG);
-                    }
-                }
-            }
+        if (field.isOpponent && field.hasBoat) {
+            drawBoat(field, BLUE, ORANGE);
         } else {
             // if it is our field than no boats will be shown
             for (int i = 0; i < 4; i++) {
@@ -139,8 +126,6 @@ void drawFieldColors(struct GameField field) {
             }
         }
 
-        // drawing white base line
-        drawRect(field.x, field.y, field.x + FIELD_SIZE, field.y + FIELD_SIZE, WHITE, 0);
     } else {
         // field.wasFound == 1 means that the field was chosen. If there was a boat, it will be shown.
         if (field.hasBoat) {
@@ -154,8 +139,9 @@ void drawFieldColors(struct GameField field) {
             }
             // TO DO: draw attack symbol
         }
-
     }
+    // drawing white base line
+    drawRect(field.x, field.y, field.x + FIELD_SIZE, field.y + FIELD_SIZE, WHITE, 0);
 }
 
 void drawDesign2 (struct GameField field) {
