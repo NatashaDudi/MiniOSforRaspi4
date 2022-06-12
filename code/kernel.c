@@ -343,29 +343,25 @@ void enemyTurn(struct GameField field[10][10]){
     static int x = 0;
     //he just checks one field at the time
     //TO DO: make him smart
-    if(hitsome == 0){
-        shoot(field[x][y]);
-        if(isHit(field) == 1){
-            hitsome = 1;
-        }else{
-            if(x==9){
-                x = 0;
-            }else{
-                x++;
-            }
-            if(y==9){
-                y = 0;
-            }else{
-                y++;
-            }
-        }  
+    shoot(field[x][y]);
+
+    if(x==9){
+        x = 0;
+    }else{
+        x++;
+    }
+    if(y==9){
+        y = 0;
+    }else{
+        y++;
     }
 }
 
 void playerPlacment(struct GameField field[10][10]){
     //the Player should be able to place his ships in this little routien
     //The shoot button will be the way to place the ships (may need adjustments)
-    int shipsToPlace = 9
+    int shipsToPlace = 9;
+    char ch = 'a';
     while(shipsToPlace > 0){
         if ( ( ch = getUart() ) ) {
             movePointer(field, ch);

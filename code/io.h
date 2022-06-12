@@ -1,8 +1,9 @@
-#define PERIPHERAL_BASE 0xFE000000
+// Code by https://github.com/isometimes/rpi4-osdev
+// Comments by Adrian, Natasha
 
-// N: not needed anymore
-// #define SAFE_ADDRESS    0x00210000 // Somewhere safe to store a lot of data
+#define PERIPHERAL_BASE 0xFE000000 // This is where the memory addresses start
 
+// All these methods are defined and described at io.c
 unsigned int gpio_call();
 unsigned int gpio_set();
 unsigned int gpio_clear();

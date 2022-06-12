@@ -1,3 +1,6 @@
+// Code by https://github.com/isometimes/rpi4-osdev
+// Comments by isometimes
+
 extern volatile unsigned int mbox[36];
 
 enum {

@@ -1,3 +1,6 @@
+// Code by https://github.com/isometimes/rpi4-osdev
+// Comments about the methods can be found at fb.h
+
 void fb_init();
 void drawPixel(int x, int y, unsigned char attr);
 void drawChar(unsigned char ch, int x, int y, unsigned char attr, int zoom);

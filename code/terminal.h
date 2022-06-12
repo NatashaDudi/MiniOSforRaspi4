@@ -1,5 +1,8 @@
+// Code by https://github.com/isometimes/rpi4-osdev
+// Comments by Natasha (N: ...), everything else is from isometimes
+
 unsigned int vgapal[] = {
-    0x000000,   // N: colors from: black
+    0x000000,   // (N: colors from: black)
     0x0000AA,
     0x00AA00,
     0x00AAAA,
@@ -14,7 +17,7 @@ unsigned int vgapal[] = {
     0xFF5555,
     0xFF55FF,
     0xFFFF55,
-    0xFFFFFF // N: over many colors to : white
+    0xFFFFFF // ( N: over many colors to : white )
 };
 
 enum {
