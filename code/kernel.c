@@ -26,8 +26,7 @@
 #define MARGIN_FIELD    10
 
 struct GameField {
-    int isOpponent; // 1 for yes, 0 for no
-    int hasBoat; //1 for yes, 0 for no
+    int hasBoat;
     int wasFound; //1 for yes, 0 for no
     unsigned int x; // x value on the screen
     unsigned int y; // y value on the screen
@@ -36,13 +35,11 @@ struct GameField {
 struct GameField oldPoint;
 int xPos;
 int yPos;
-
 int boats = 9;
 
-void initializeGameField(struct GameField field[10][10], int isOpponent) {
+void initializeGameField(struct GameField field[10][10]) {
     for (int i = 0; i < 10; i++) {
         for (int j= 0; j < 10; j++) {
-            field[i][j].isOpponent = isOpponent;
             field[i][j].hasBoat = 0;
             field[i][j].wasFound = 0;
             field[i][j].x = 0; // has to be changed to the x value of the field
@@ -107,7 +104,7 @@ void drawWaves(struct GameField field, int offsetX, int offsetY, int amountOfWav
 }
 
 
-void drawFieldColors(struct GameField field) {
+void drawFieldColors(struct GameField field, int isOpponent) {
     // drawing blue background
     drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE - 1, BLUE, 1);
 
@@ -115,7 +112,7 @@ void drawFieldColors(struct GameField field) {
 
     if (field.wasFound == 0) {
     
-        if (field.isOpponent && field.hasBoat) {
+        if (isOpponent && field.hasBoat) {
             drawBoat(field, BLUE, ORANGE);
         } else {
             // if it is our field than no boats will be shown
@@ -181,7 +178,7 @@ void drawDesign2Margin () {
     }
 }
 
-void drawBoardGame (struct GameField board[10][10], unsigned int offset, unsigned int offsetY) {
+void drawBoardGame (struct GameField board[10][10], unsigned int offset, unsigned int offsetY, int isOpponent) {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
             int xValue = i * FIELD_SIZE + offset;
@@ -190,7 +187,7 @@ void drawBoardGame (struct GameField board[10][10], unsigned int offset, unsigne
             // put values in array for the boardgame
             board[i][j].x = xValue; 
             board[i][j].y = yValue;
-            drawFieldColors(board[i][j]);
+            drawFieldColors(board[i][j], isOpponent);
         }
     }
 }
@@ -216,7 +213,7 @@ void pointer(struct GameField field){
 	//checks if there is already a Highliter via an invisible tile.
 	if(oldPoint.x != 0){
 		//draws the ourField design to remove the last highliter
-		drawFieldColors(oldPoint);
+		drawFieldColors(oldPoint, 0);
 			
 	}
 	//draws the new Highliter
@@ -402,11 +399,11 @@ void main() {
     
     // initializing the players field
     struct GameField ourField[10][10];
-    initializeGameField(ourField, 0);
+    initializeGameField(ourField);
 
     // initializing the field of the opponent
     struct GameField fieldOfOpponent[10][10];
-    initializeGameField(fieldOfOpponent, 1);
+    initializeGameField(fieldOfOpponent);
 
     
     // initialisation for the connection with I/O
@@ -438,10 +435,10 @@ void main() {
     int offsetX = ((WIDTH/2) - (FIELD_SIZE * 10)) /2;
     
     // board of player is drawn here:
-    drawBoardGame(ourField, offsetX, offsetY);
+    drawBoardGame(ourField, offsetX, offsetY, 0);
 
     // board of opponent is drawn here:
-    drawBoardGame(fieldOfOpponent, offsetX + WIDTH/2, offsetY);
+    drawBoardGame(fieldOfOpponent, offsetX + WIDTH/2, offsetY, 1);
 
     drawDesign2Margin();
 
