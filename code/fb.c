@@ -8,6 +8,7 @@
 unsigned int width, height, pitch, isrgb;
 unsigned char *fb;
 
+// fb == framebuffer which is used to print something on a screen.
 void fb_init()
 {
     mbox[0] = 35*4; // Length of message in bytes (comment from isometimes)
@@ -77,7 +78,7 @@ void drawRect(int x1, int y1, int x2, int y2, unsigned char attr, int fill)
     int y=y1;
 
     while (y <= y2) {
-       int x=x1;
+       int x = x1;
        // we start at (x1, y1)
        while (x <= x2) {
 	  if ((x == x1 || x == x2) || (y == y1 || y == y2)) drawPixel(x, y, attr);
