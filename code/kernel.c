@@ -115,8 +115,6 @@ void drawAttackSymbol(struct GameField field) {
 
 
 void drawFieldColors(struct GameField field, int isOpponent) {
-    // drawing blue background
-    drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE - 1, BLUE, 1);
 
     // if field was not found yet than there are some waves 
 
@@ -125,6 +123,8 @@ void drawFieldColors(struct GameField field, int isOpponent) {
         if (isOpponent && field.hasBoat) {
             drawBoat(field, BLUE, ORANGE);
         } else {
+            // drawing blue background
+            drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE - 1, BLUE, 1);
             // if it is our field than no boats will be shown
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 5; j++) {
@@ -139,6 +139,9 @@ void drawFieldColors(struct GameField field, int isOpponent) {
             drawBoat(field, GREY, LIGHT_GREY);
             // TO DO: draw attack symbol
         } else {
+            // drawing background
+            drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE - 1, BLUE, 1);
+            // drawing waves
             for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
                     drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, GREY, LIGHT_GREY);
