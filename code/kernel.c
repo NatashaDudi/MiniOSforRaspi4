@@ -301,7 +301,7 @@ void movePointer(struct GameField field[10][10], char richtung){
                         xPos = 0;
                     } 
                    break;
-        case '|':   if(xPos != 0){
+        case 'I':   if(xPos != 0){
                         pointer(field[xPos-1][yPos]);
                         xPos--;
                     }else{
