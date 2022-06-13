@@ -33,6 +33,8 @@ struct GameField {
 };
 
 struct GameField oldPoint;
+struct GameField* fieldd;
+field = &oldPoint;
 int xPos;
 int yPos;
 int boats = 9;
@@ -326,6 +328,7 @@ void movePointer(struct GameField field[10][10], char richtung){
                     }
                     break;
     }
+    fieldd = &field[xPos][yPos];
 }
 
 void enemyTurn(struct GameField field[10][10]){
@@ -367,10 +370,15 @@ void playerPlacment(struct GameField field[10][10]){
                 drawString((WIDTH/2)-252, (MARGIN+10), "you went down", 0x0f, 5);
             } else if (ch == ';') {
                 // keyboard: t, g, b -> choose
-                drawString((WIDTH/2)-252, (MARGIN+10), "you Placed a Boad", 0x0f, 5);
+                
                 //main differenc hier
-                placeBoat(oldPoint);
-                shipsToPlace--;
+                if(oldPoint.hasBoat == 0){
+                    placeBoat(oldPoint);
+                    shipsToPlace--;
+                    drawString((WIDTH/2)-252, (MARGIN+10), "you Placed a Boad", 0x0f, 5);
+                }else{
+                  drawString((WIDTH/2)-252, (MARGIN+10), "ther is already a Boad", 0x0f, 5);  
+                }
             } else {
                 // keyboard: f, d, s -> left
                 drawString((WIDTH/2)-252, (MARGIN+10), "you went to the left", 0x0f, 5);
@@ -504,7 +512,7 @@ void main() {
             } else if (ch == ';') {
                 // keyboard: t, g, b -> choose
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you choose a field", 0x0f, 5);
-                shoot(oldPoint);
+                shoot(*fieldd);
             } else {
                 // keyboard: f, d, s -> left
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 5);
