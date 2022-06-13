@@ -212,14 +212,15 @@ void drawMarginAroundField(struct GameField field, int thicknessOfMargin) {
 void pointer(struct GameField field){
 	//Highlights the curentle selectet tile.
 	//checks if there is already a Highliter via an invisible tile.
-	if(oldPoint.x != 0){
 		//draws the ourField design to remove the last highliter
-		drawFieldColors(oldPoint, 0);
+	drawFieldColors(*fieldd, 0);
 			
-	}
 	//draws the new Highliter
 	drawMarginAroundField(field, 10);
-	oldPoint = field;
+	fieldd = &field;
+    if(isHit(field)){
+        drawChar('B', 1000, 10, 0x0f, 3);
+    }
 }
 
 int isHit(struct GameField field){
@@ -237,9 +238,13 @@ void placeBoat(struct GameField field){
 
 void shoot(struct GameField field){
 	//Sets a tile to the used ones
-	field.wasFound = 1;
-    if(isHit(field) == 1){
-        boats--;
+    if(field.wasFound = 0){
+        field.wasFound = 1;
+        if(isHit(field) == 1){
+            boats--;
+        }
+    }else{
+        drawString((WIDTH/2)-252, (MARGIN+10), "you Hit this place already", 0x0f, 5);
     }
 }
 
@@ -371,9 +376,10 @@ void playerPlacment(struct GameField field[10][10]){
                 // keyboard: t, g, b -> choose
                 
                 //main differenc hier
-                if(*fieldd.hasBoat == 0){
+                if(fieldd->hasBoat == 0){
                     placeBoat(*fieldd);
                     shipsToPlace--;
+                    //im test
                 }else{
                   drawString((WIDTH/2)-252, (MARGIN+10), "ther is already a Boad", 0x0f, 5);  
                 }
@@ -435,7 +441,7 @@ void main() {
      
     drawChar('N', 700, 700, 0x0f, 10);  
     drawChar('A', 700, 750, 0x0f, 10);  
-    drawString(708, 725, "OS", 0x0f, 3);
+    drawString(720, 725, "OS", 0x0f, 3);
  
     drawString((WIDTH/2)-252, MARGIN-25, "Battleship >:D", 0x0f, 3);
  
