@@ -33,8 +33,7 @@ struct GameField {
 };
 
 struct GameField oldPoint;
-struct GameField* fieldd;
-field = &oldPoint;
+struct GameField* fieldd = &oldPoint;
 int xPos;
 int yPos;
 int boats = 9;
@@ -232,8 +231,8 @@ void placeBoat(struct GameField field){
 	//Places a boat
     if(field.hasBoat == 0){
         field.hasBoat = 1;
+        drawString((WIDTH/2)-252, (MARGIN+10), "you Placed a Boad", 0x0f, 5);
     }
-	
 }
 
 void shoot(struct GameField field){
@@ -285,7 +284,7 @@ int loser(struct GameField field[10][10]){
 			}
 		}
 	}
-	if(sum >= 10){
+	if(sum == 9){
 		return 1;
 	}else{
 		return 0;
@@ -372,10 +371,9 @@ void playerPlacment(struct GameField field[10][10]){
                 // keyboard: t, g, b -> choose
                 
                 //main differenc hier
-                if(oldPoint.hasBoat == 0){
+                if(*fieldd.hasBoat == 0){
                     placeBoat(*fieldd);
                     shipsToPlace--;
-                    drawString((WIDTH/2)-252, (MARGIN+10), "you Placed a Boad", 0x0f, 5);
                 }else{
                   drawString((WIDTH/2)-252, (MARGIN+10), "ther is already a Boad", 0x0f, 5);  
                 }
