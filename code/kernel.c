@@ -293,28 +293,36 @@ int loser(struct GameField field[10][10]){
 void movePointer(struct GameField field[10][10], char richtung){
     //moves the pointer throu user input
     switch(richtung){ 
-        case 'Q':  if(xPos != 9){
+        case '3':  if(xPos != 9){
                         pointer(field[xPos+1][yPos]);
+                        xPos++;
                     }else{
                         pointer(field[0][yPos]);
+                        xPos = 0;
                     } 
                    break;
-        case 's':   if(xPos != 0){
+        case '|':   if(xPos != 0){
                         pointer(field[xPos-1][yPos]);
+                        xPos--;
                     }else{
                         pointer(field[9][yPos]);
+                        xPos = 9;
                     }
-                    break;
-        case '3':   if(yPos != 9){
+                    break; 
+        case 's':   if(yPos != 9){
                         pointer(field[xPos][yPos+1]);
+                        yPos++;
                     }else{
                         pointer(field[xPos][0]);
+                        yPos = 0;
                     }
                     break;
-        case '|':   if(yPos != 0){
+        case 'Q':   if(yPos != 0){
                         pointer(field[xPos][yPos-1]);
+                        yPos--;
                     }else{
                         pointer(field[xPos][9]);
+                        yPos = 9;
                     }
                     break;
     }
@@ -327,7 +335,6 @@ void enemyTurn(struct GameField field[10][10]){
     //he just checks one field at the time
     //TO DO: make him smart
     shoot(field[x][y]);
-
     if(x==9){
         x = 0;
     }else{
@@ -351,22 +358,22 @@ void playerPlacment(struct GameField field[10][10]){
             drawChar(ch, 50, 50, 0x0f, 3);
             // keyboard: c, d, e -> up
             if (ch == 's') {
-            drawString((WIDTH/2)-252, (MARGIN + 10), "you went up", 0x0f, 10);
+                drawString((WIDTH/2)-252, (MARGIN + 10), "you went up", 0x0f, 5);
             } else if (ch == '3') {
                 // keyboard: s, d, f -> right
-                drawString((WIDTH/2)-252, (MARGIN+10), "you went to the right", 0x0f, 10);
+                drawString((WIDTH/2)-252, (MARGIN+10), "you went to the right", 0x0f, 5);
             } else if (ch == 'Q') {
                 // keyboard: e, d, c -> down
-                drawString((WIDTH/2)-252, (MARGIN+10), "you went down", 0x0f, 10);
+                drawString((WIDTH/2)-252, (MARGIN+10), "you went down", 0x0f, 5);
             } else if (ch == ';') {
-                // keyboard: t, g, b -> down
-                drawString((WIDTH/2)-252, (MARGIN+10), "you Placed a Boad", 0x0f, 10);
+                // keyboard: t, g, b -> choose
+                drawString((WIDTH/2)-252, (MARGIN+10), "you Placed a Boad", 0x0f, 5);
                 //main differenc hier
                 placeBoat(oldPoint);
                 shipsToPlace--;
             } else {
                 // keyboard: f, d, s -> left
-                drawString((WIDTH/2)-252, (MARGIN+10), "you went to the left", 0x0f, 10);
+                drawString((WIDTH/2)-252, (MARGIN+10), "you went to the left", 0x0f, 5);
             }
 
         }
@@ -445,6 +452,11 @@ void main() {
     // margin tests
     //drawMarginAroundField(ourField[1][1], MARGIN_FIELD);
     
+    int j = 0;
+    int t = 0;
+    xPos = j;
+    yPos = t;
+
     //Player can place ships
     playerPlacment(fieldOfOpponent);
 
@@ -458,10 +470,7 @@ void main() {
     int gameStillOn = 1;
 
     //set the first position
-    int j = 0;
-    int t = 0;
-    xPos = j;
-    yPos = t;
+    
     pointer(ourField[0][0]);
 
     //OS loop
@@ -485,20 +494,20 @@ void main() {
             drawChar(ch, 50, 50, 0x0f, 3);
             // keyboard: c, d, e -> up
             if (ch == 's') {
-            drawString((WIDTH/2)-252, (MARGIN + 10), "you went up", 0x0f, 10);
+            drawString((WIDTH/2)-252, (MARGIN + 10), "you went up", 0x0f, 5);
             } else if (ch == '3') {
                 // keyboard: s, d, f -> right
-                drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the right", 0x0f, 10);
+                drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the right", 0x0f, 5);
             } else if (ch == 'Q') {
                 // keyboard: e, d, c -> down
-                drawString((WIDTH/2)-252, (MARGIN + 10), "you went down", 0x0f, 10);
+                drawString((WIDTH/2)-252, (MARGIN + 10), "you went down", 0x0f, 5);
             } else if (ch == ';') {
-                // keyboard: t, g, b -> down
-                drawString((WIDTH/2)-252, (MARGIN + 10), "you choose a field", 0x0f, 10);
+                // keyboard: t, g, b -> choose
+                drawString((WIDTH/2)-252, (MARGIN + 10), "you choose a field", 0x0f, 5);
                 shoot(oldPoint);
             } else {
                 // keyboard: f, d, s -> left
-                drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 10);
+                drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 5);
                 
             }
 
