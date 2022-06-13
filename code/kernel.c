@@ -527,7 +527,7 @@ void main() {
             } else if (ch == ';') {
                 // keyboard: t, g, b -> choose
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you choose a field", 0x0f, 5);
-                shoot(ourField[xPos][yPos]);
+                shoot(ourField);
             } else if(ch == '2') {
                 // keyboard: f, d, s -> left
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 5);
