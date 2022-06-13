@@ -140,7 +140,7 @@ void drawFieldColors(struct GameField field, int isOpponent) {
             // TO DO: draw attack symbol
         } else {
             // drawing background
-            drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE - 1, BLUE, 1);
+            drawRect(field.x + 1, field.y + 1, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE - 1, GREY, 1);
             // drawing waves
             for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 5; j++) {
@@ -228,7 +228,6 @@ void pointer(struct GameField field){
 	if(oldPoint.x != 0){
 		//draws the ourField design to remove the last highliter
 		drawFieldColors(oldPoint, 0);
-			
 	}
 	//draws the new Highliter
 	drawMarginAroundField(field, 10);
@@ -395,6 +394,8 @@ void playerPlacment(struct GameField field[10][10]){
                 }else{
                   drawString((WIDTH/2)-252, (MARGIN+10), "ther is already a Boad", 0x0f, 5);  
                 }
+                drawFieldColors(field[xPos][yPos],1);
+                drawMarginAroundField(field[xPos][yPos],10);
             } else {
                 // keyboard: f, d, s -> left
                 drawString((WIDTH/2)-252, (MARGIN+10), "input plz", 0x0f, 5);
@@ -528,6 +529,8 @@ void main() {
                 // keyboard: t, g, b -> choose
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you choose a field", 0x0f, 5);
                 shoot(ourField);
+                drawFieldColors(ourField[xPos][yPos],1);
+                drawMarginAroundField(ourField[xPos][yPos],10);
             } else if(ch == '2') {
                 // keyboard: f, d, s -> left
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 5);
