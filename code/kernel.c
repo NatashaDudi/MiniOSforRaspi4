@@ -222,15 +222,14 @@ void drawMarginAroundField(struct GameField field, int thicknessOfMargin) {
 void pointer(struct GameField field){
 	//Highlights the curentle selectet tile.
 	//checks if there is already a Highliter via an invisible tile.
+	if(oldPoint.x != 0){
 		//draws the ourField design to remove the last highliter
-	drawFieldColors(*fieldd, 0);
+		drawFieldColors(oldPoint, 0);
 			
+	}
 	//draws the new Highliter
 	drawMarginAroundField(field, 10);
-	fieldd = &field;
-    if(isHit(field)){
-        drawChar('B', 1000, 10, 0x0f, 3);
-    }
+	oldPoint = field;
 }
 
 int isHit(struct GameField field){
@@ -238,19 +237,19 @@ int isHit(struct GameField field){
 	return field.hasBoat;
 }
 
-void placeBoat(struct GameField field){
+void placeBoat(struct GameField field[10][10]){
 	//Places a boat
-    if(field.hasBoat == 0){
-        field.hasBoat = 1;
+    if(field[xPos][yPos].hasBoat == 0){
+        field[xPos][yPos].hasBoat = 1;
         drawString((WIDTH/2)-252, (MARGIN+10), "you Placed a Boad", 0x0f, 5);
     }
 }
 
-void shoot(struct GameField field){
+void shoot(struct GameField field[10][10]){
 	//Sets a tile to the used ones
-    if(field.wasFound = 0){
-        field.wasFound = 1;
-        if(isHit(field) == 1){
+    if(field[xPos][yPos].wasFound == 0){
+        field[xPos][yPos].wasFound = 1;
+        if(isHit(field[xPos][yPos]) == 1){
             boats--;
         }
     }else{
@@ -351,7 +350,7 @@ void enemyTurn(struct GameField field[10][10]){
     static int x = 0;
     //he just checks one field at the time
     //TO DO: make him smart
-    shoot(field[x][y]);
+    shoot(field);
     if(x==9){
         x = 0;
     }else{
@@ -387,7 +386,7 @@ void playerPlacment(struct GameField field[10][10]){
                 
                 //main differenc hier
                 if(fieldd->hasBoat == 0){
-                    placeBoat(*fieldd);
+                    placeBoat(field);
                     shipsToPlace--;
                     //im test
                 }else{
@@ -525,7 +524,7 @@ void main() {
             } else if (ch == ';') {
                 // keyboard: t, g, b -> choose
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you choose a field", 0x0f, 5);
-                shoot(*fieldd);
+                shoot(ourField[xPos][yPos]);
             } else if(ch == '2') {
                 // keyboard: f, d, s -> left
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 5);
