@@ -303,7 +303,7 @@ void movePointer(struct GameField field[10][10], char richtung){
                         xPos = 0;
                     } 
                    break;
-        case 'I':   if(xPos != 0){
+        case 'l':   if(xPos != 0){
                         pointer(field[xPos-1][yPos]);
                         xPos--;
                     }else{
@@ -381,7 +381,7 @@ void playerPlacment(struct GameField field[10][10]){
                 }
             } else {
                 // keyboard: f, d, s -> left
-                drawString((WIDTH/2)-252, (MARGIN+10), "you went to the left", 0x0f, 5);
+                drawString((WIDTH/2)-252, (MARGIN+10), "input plz", 0x0f, 5);
             }
 
         }
@@ -513,10 +513,12 @@ void main() {
                 // keyboard: t, g, b -> choose
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you choose a field", 0x0f, 5);
                 shoot(*fieldd);
-            } else {
+            } else if(ch == l) {
                 // keyboard: f, d, s -> left
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 5);
                 
+            }else{
+                drawString((WIDTH/2)-252, (MARGIN+10), "input plz", 0x0f, 5);
             }
 
         }
