@@ -58,6 +58,8 @@ enum {
     LIGHT_BLUE = 0x99,
     LIGHT_BLUE_COLD = 0xBB,
     ORANGE = 0x66,
+    PINK = 0x55,
+    RED = 0x44,
     BLACK = 0x00,
     LIGHT_GREY = 0x77,
     GREY = 0x88,
@@ -91,7 +93,7 @@ void drawBoat(struct GameField field, int backgroundColor, int boatColor) {
         drawCircle(field.x + 50 - i * 20, field.y + 30, 20, WHITE, 1);
         drawRect(field.x + 30 - i * 20, field.y + 10, field.x + 50 - i * 20, field.y + 50, backgroundColor, 1);
         // add line for mast
-        drawRect(field.x + 50 - i * 20, field.y + 50, field.x + 52 - i * 20, field.y + 60, WHITE, 1);
+        drawRect(field.x + 51 - i * 20, field.y + 50, field.x + 52 - i * 20, field.y + 60, WHITE, 1);
     }
 }
 
@@ -102,6 +104,13 @@ void drawWaves(struct GameField field, int offsetX, int offsetY, int amountOfWav
     for (int i = 0; i < amountOfWaves; i++) {
         drawCircle(field.x + i * WAVE_LENGTH + offsetX + WAVE_RADIUS, field.y + offsetY + WAVE_RADIUS + 5, WAVE_RADIUS, darkerColor, 1);
     }
+}
+
+void drawAttackSymbol(struct GameField field) {
+    // draw red diagnoal (three times so that it looks thicker)
+    drawLine(field.x + 1, field.y + 1, field.x + FIELD_SIZE, field.y + FIELD_SIZE, RED);
+    drawLine(field.x + 1, field.y + 2, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE, RED);
+    drawLine(field.x + 2, field.y + 1, field.x + FIELD_SIZE, field.y + FIELD_SIZE - 1, RED);
 }
 
 
@@ -135,8 +144,9 @@ void drawFieldColors(struct GameField field, int isOpponent) {
                     drawWaves(field, 0, j * (WAVE_LENGTH - 6), 4, GREY, LIGHT_GREY);
                 }
             }
-            // TO DO: draw attack symbol
+            
         }
+        drawAttackSymbol(field);
     }
     // drawing white base line
     drawRect(field.x, field.y, field.x + FIELD_SIZE, field.y + FIELD_SIZE, WHITE, 0);
@@ -459,8 +469,6 @@ void main() {
     // board of opponent is drawn here:
     drawBoardGame(fieldOfOpponent, offsetX + WIDTH/2, offsetY, 1);
 
-    drawDesign2Margin();
-
     // margin tests
     //drawMarginAroundField(ourField[1][1], MARGIN_FIELD);
     
@@ -475,6 +483,7 @@ void main() {
 
     enemyPlacement(ourField);
     drawBoat(ourField[9][0], BLUE, ORANGE);
+    drawAttackSymbol(ourField[9][0]);
     unsigned char ch = 0;
 
     int i = 0;
