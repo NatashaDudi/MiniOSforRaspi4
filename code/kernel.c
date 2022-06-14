@@ -37,8 +37,8 @@ struct GameField oldPoint;
 struct GameField* fieldd = &oldPoint;
 int xPos;
 int yPos;
-int xEne;
-int yEne;
+int xEne = 0;
+int yEne = 0;
 int boats = 9;
 int eBoats = 9;
 int random[9] = {0,0,0,0,0,0,0,0,0};
@@ -259,17 +259,27 @@ void placeBoat(struct GameField field[10][10]){
 
 void shoot(struct GameField field[10][10], int a){
 	//Sets a tile to the used ones
-    if(field[xPos][yPos].wasFound == 0){
-        field[xPos][yPos].wasFound = 1;
-        if(isHit(field[xPos][yPos]) == 1){
+           
             if(a == 0){
-                boats--;
+                if(field[xPos][yPos].wasFound == 0){
+                    field[xPos][yPos].wasFound = 1;
+                    if(isHit(field[xPos][yPos]) == 1){
+                        boats--;
+                    }else{
+                        drawString((WIDTH/2)-252, (MARGIN+10), "you Hit this place already", 0x0f, 5);
+                    }
+                }
             }else{
-                eBoats--;
+                if(field[xEne][yEne].wasFound == 0){
+                    field[xEne][yEne].wasFound = 1;
+                    if(isHit(field[xEne][yEne]) == 1){
+                        eBoats--;
+                    }
+                }else{
+                    drawString((WIDTH/2)-252, (MARGIN+10), "you Hit this place already", 0x0f, 5);
+                }
             }
-        }
-    }else{
-        drawString((WIDTH/2)-252, (MARGIN+10), "you Hit this place already", 0x0f, 5);
+
     }
 }
 
@@ -356,20 +366,18 @@ void enemyPlacement(struct GameField field[10][10]){
 
 void enemyTurn(struct GameField field[10][10]){
     //the Brain of our enemy and his devies plans
-    static int y = 0;
-    static int x = 0;
     //he just checks one field at the time
     //TO DO: make him smart
     shoot(field, 1);
-    drawFieldColors(field[x][y],1);
-    if(x==9){
-        x = 0;
-        y++;
+    drawFieldColors(field[xEne][yEne],1);
+    if(xEne==9){
+        xEne = 0;
+        yEne++;
     }else{
-        x++;
+        xEne++;
     }
-    if(y==9){
-        y = 0;
+    if(yEne==9){
+        yEne = 0;
     }
 }
 
@@ -527,17 +535,17 @@ void main() {
     while (gameStillOn) {
         //showing how many ships there are
     	drawString((offsetX+(2*FIELD_SIZE)), (offsetY-10), "Ships left: ", 0x0f, 3);
-    	drawChar(boats + 0x30, (offsetX+(2*FIELD_SIZE)), (offsetY-10), 0x0f, 3); 
+    	drawChar(boats + 0x30, (offsetX+(2*FIELD_SIZE)), (offsetY-30), 0x0f, 3); 
 
-        drawString((offsetX+(2*FIELD_SIZE)), (offsetY-10), "Your Ships left: ", 0x0f, 3);
-    	drawChar(eBoats + 0x30, (offsetX + WIDTH/2+(2*FIELD_SIZE)), (offsetY-10), 0x0f, 3); 
+        drawString((offsetX+ WIDTH/2+(2*FIELD_SIZE)), (offsetY-10), "Your Ships left: ", 0x0f, 3);
+    	drawChar(eBoats + 0x30, (offsetX + WIDTH/2+(6*FIELD_SIZE)), (offsetY-300), 0x0f, 3); 
 
         if (i == 16) {i=0;}
         wait_msec(480000); // Wait a little...
         //wait_msec(4000); // Wait a little...
 
         uart_writeText("1");
-        
+        drawFieldColors(ourField[0][0],0);
         //check for input
         if ( ( ch = getUart() ) ) {
             movePointer(ourField, ch,0);
