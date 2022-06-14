@@ -576,6 +576,7 @@ void main() {
             drawString((50), (HEIGHT/2), "GAME OVER", 0x0f, 20);
         }
         //uart_update();
-    }   
+    } 
+    //Stops the system from crashing after finishing main method   
     while (1);
 }
