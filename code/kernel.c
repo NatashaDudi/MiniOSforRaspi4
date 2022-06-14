@@ -528,22 +528,20 @@ void main() {
     //set the first position
     
     pointer(ourField[0][0],0);
+    drawFieldColors(ourField[0][0],0);
 
     //OS loop
     while (gameStillOn) {
         //showing how many ships there are
-    	drawString((offsetX+(2*FIELD_SIZE)), (offsetY-10), "Ships left: ", 0x0f, 3);
-    	drawChar(boats + 0x30, (offsetX+(2*FIELD_SIZE)), (offsetY-30), 0x0f, 3); 
+    	drawString((offsetX+(2*FIELD_SIZE)), (offsetY-30), "Ships left: ", 0x0f, 3);
+    	drawChar(boats + 0x30, (offsetX+(6*FIELD_SIZE)), (offsetY-30), 0x0f, 3); 
 
-        drawString((offsetX+ WIDTH/2+(2*FIELD_SIZE)), (offsetY-10), "Your Ships left: ", 0x0f, 3);
-    	drawChar(eBoats + 0x30, (offsetX + WIDTH/2+(6*FIELD_SIZE)), (offsetY-300), 0x0f, 3); 
+        drawString((offsetX+ WIDTH/2+(2*FIELD_SIZE)), (offsetY-30), "Your Ships left: ", 0x0f, 3);
+    	drawChar(eBoats + 0x30, (offsetX + WIDTH/2+(8*FIELD_SIZE)), (offsetY-30), 0x0f, 3); 
 
         if (i == 16) {i=0;}
-        wait_msec(480000); // Wait a little...
-        //wait_msec(4000); // Wait a little...
-
+        wait_msec(4000); 
         uart_writeText("1");
-        drawFieldColors(ourField[0][0],0);
         //check for input
         if ( ( ch = getUart() ) ) {
             movePointer(ourField, ch,0);
@@ -571,11 +569,11 @@ void main() {
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 5);
                 
             }else{
-                drawString((WIDTH/2)-252, (MARGIN+10), "input plz", 0x0f, 5);
+                //drawString((WIDTH/2)-252, (MARGIN+10), "input plz", 0x0f, 5);
             }
         }  
         uart_loadOutputFifo();
-        drawFieldColors(ourField[0][0],0);
+        
         i++;
         //check for loser
         if(loser(ourField) == 1){
