@@ -279,8 +279,6 @@ void shoot(struct GameField field[10][10], int a){
                     drawString((WIDTH/2)-252, (MARGIN+10), "you Hit this place already", 0x0f, 5);
                 }
             }
-
-    }
 }
 
 int loser(struct GameField field[10][10]){
