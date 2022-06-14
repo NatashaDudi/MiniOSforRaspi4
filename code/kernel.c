@@ -467,9 +467,6 @@ void playerPlacment(struct GameField field[10][10]){
 //=============================================================================================================
 
 void main() {
-    // creating an array with colors available
-    static int colors[] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
-    
     oldPoint.hasBoat = 0;
     oldPoint.wasFound = 0;
     oldPoint.x=0; 
