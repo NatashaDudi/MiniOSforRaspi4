@@ -526,12 +526,11 @@ void main() {
         if (i == 16) {i=0;}
         wait_msec(480000); // Wait a little...
         //wait_msec(4000); // Wait a little...
-        drawChar(i + 0x30, (WIDTH/2)-252 + (8*8*3), MARGIN-25, 0x0f, 3);
-
+        
         drawRect(0, 0, 50, 50, colors[i], 1);
-        drawRect(1850, 0, 1080, 0, colors[i], 1);
-        drawRect(0, 1850, 0, 1900, colors[i], 1);
-        drawRect(1850, 1030, 1900, 1080, colors[i], 1);
+        drawRect((HEIGHT-50), 0, HEIGHT, 0, colors[i], 1);
+        drawRect(0, (WIDTH-50), 0, WIDTH, colors[i], 1);
+        drawRect((HEIGHT-50), (WIDTH-50), HEIGHT, WIDTH, colors[i], 1);
 
         uart_writeText("1");
 
