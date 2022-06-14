@@ -233,12 +233,12 @@ void drawMarginAroundField(struct GameField field, int thicknessOfMargin) {
 
 //============GAMELOGIK=====================================================================================
 
-void pointer(struct GameField field){
+void pointer(struct GameField field, int a){
 	//Highlights the curentle selectet tile.
 	//checks if there is already a Highliter via an invisible tile.
 	if(fieldd->x != 0){
 		//draws the ourField design to remove the last highliter
-		drawFieldColors(*fieldd, 0);
+		drawFieldColors(*fieldd, a);
 	}
 	//draws the new Highliter
 	drawMarginAroundField(field, 10);
@@ -289,38 +289,38 @@ int loser(struct GameField field[10][10]){
 	}
 }
 
-void movePointer(struct GameField field[10][10], char richtung){
+void movePointer(struct GameField field[10][10], char richtung, int a){
     //moves the pointer throu user input
     switch(richtung){ 
         case '3':  if(xPos != 9){
-                        pointer(field[xPos+1][yPos]);
+                        pointer(field[xPos+1][yPos],a);
                         xPos++;
                     }else{
-                        pointer(field[0][yPos]);
+                        pointer(field[0][yPos],a);
                         xPos = 0;
                     } 
                    break;
         case '2':   if(xPos != 0){
-                        pointer(field[xPos-1][yPos]);
+                        pointer(field[xPos-1][yPos],a);
                         xPos--;
                     }else{
-                        pointer(field[9][yPos]);
+                        pointer(field[9][yPos],a);
                         xPos = 9;
                     }
                     break; 
         case 'Q':   if(yPos != 9){
-                        pointer(field[xPos][yPos+1]);
+                        pointer(field[xPos][yPos+1],a);
                         yPos++;
                     }else{
-                        pointer(field[xPos][0]);
+                        pointer(field[xPos][0],a);
                         yPos = 0;
                     }
                     break;
         case 's':   if(yPos != 0){
-                        pointer(field[xPos][yPos-1]);
+                        pointer(field[xPos][yPos-1],a);
                         yPos--;
                     }else{
-                        pointer(field[xPos][9]);
+                        pointer(field[xPos][9],a);
                         yPos = 9;
                     }
                     break;
@@ -386,7 +386,7 @@ void playerPlacment(struct GameField field[10][10]){
 
         //the routien that checks for input
         if ( ( ch = getUart() ) ) {
-            movePointer(field, ch);
+            movePointer(field, ch,1);
             drawChar(ch, 50, 50, 0x0f, 3);
             // additional screen output for clarity and debugging purposes
             // keyboard: c, d, e -> up
@@ -516,7 +516,7 @@ void main() {
 
     //set the first position
     
-    pointer(ourField[0][0]);
+    pointer(ourField[0][0],0);
 
     //OS loop
     while (gameStillOn) {
@@ -539,7 +539,7 @@ void main() {
         //check for input
         
         if ( ( ch = getUart() ) ) {
-            movePointer(ourField, ch);
+            movePointer(ourField, ch,0);
             drawChar(ch, 50, 50, 0x0f, 3);
             // additional screen output for clarity and debugging purposes
             // keyboard: c, d, e -> up
