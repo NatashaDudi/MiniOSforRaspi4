@@ -92,7 +92,6 @@ void drawBoat(struct GameField field, int backgroundColor, int boatColor) {
     }
     drawRect(field.x + 20, field.y + 60, field.x + 60, field.y + 70, boatColor, 1);
     
-
     // draw sail and mast twice
     for (int i = 0; i < 2; i++) {
         // draw a circle and get rid of one half
@@ -119,7 +118,6 @@ void drawAttackSymbol(struct GameField field) {
     drawLine(field.x + 1, field.y + 2, field.x + FIELD_SIZE - 1, field.y + FIELD_SIZE, RED);
     drawLine(field.x + 2, field.y + 1, field.x + FIELD_SIZE, field.y + FIELD_SIZE - 1, RED);
 }
-
 
 void drawFieldColors(struct GameField field, int isOpponent) {
 
@@ -426,7 +424,6 @@ void playerPlacment(struct GameField field[10][10]){
                 // keyboard: f, d, s -> left
                 drawString((WIDTH/2)-252, (MARGIN+10), "input plz", 0x0f, 5);
             }
-
         }
         
         rand++;
@@ -526,14 +523,13 @@ void main() {
         if (i == 16) {i=0;}
         wait_msec(480000); // Wait a little...
         //wait_msec(4000); // Wait a little...
-        
+
         drawRect(0, 0, 50, 50, colors[i], 1);
         drawRect((HEIGHT-50), 0, HEIGHT, 0, colors[i], 1);
         drawRect(0, (WIDTH-50), 0, WIDTH, colors[i], 1);
         drawRect((HEIGHT-50), (WIDTH-50), HEIGHT, WIDTH, colors[i], 1);
 
         uart_writeText("1");
-
         
         //check for input
         
@@ -564,7 +560,6 @@ void main() {
             }else{
                 drawString((WIDTH/2)-252, (MARGIN+10), "input plz", 0x0f, 5);
             }
-
         }  
         uart_loadOutputFifo();
 
