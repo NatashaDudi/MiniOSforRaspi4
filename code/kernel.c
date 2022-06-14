@@ -369,6 +369,29 @@ void enemyTurn(struct GameField field[10][10]){
     }
 }
 
+int isInRandom(int a){
+    //checks if nummer is in random already
+    int isit = 0;
+    for(int v = 0; v<10; v++){
+        if(random[v]==a){
+            isit = 1;
+        }
+    }
+    return isit;
+}
+
+int punshNumbers(int a){
+    //generats a new number
+    int r = 0;
+    for(int v = 0; v < a; v++){
+        r = r + 13;
+        if(r > 100){
+            r = r % 100;
+        }
+    }
+    return r;
+}
+
 void playerPlacment(struct GameField field[10][10]){
     //the Player should be able to place his ships in this little routien
     //The shoot button will be the way to place the ships (may need adjustments)
@@ -432,27 +455,7 @@ void playerPlacment(struct GameField field[10][10]){
     }
 }
 
-int isInRandom(int a){
-    //checks if nummer is in random already
-    int isit = 0;
-    for(int v = 0; v<10; v++){
-        if(random[v]==a){
-            isit = 1;
-        }
-    }
-    return isit;
-}
 
-int punshNumbers(int a){
-    //generats a new number
-    int r = 0;
-    for(int v = 0; v < a; v++){
-        r = r + 13;
-        if(r > 100){
-            r = r % 100;
-        }
-    }
-}
 
 //=============================================================================================================
 
