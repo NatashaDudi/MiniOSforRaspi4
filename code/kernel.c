@@ -40,7 +40,7 @@ int yPos;
 int xEne;
 int yEne;
 int boats = 9;
-int random[9];
+int random[9] = {0,0,0,0,0,0,0,0,0};
 //=================================
 
 void initializeGameField(struct GameField field[10][10]) {
@@ -404,9 +404,18 @@ void playerPlacment(struct GameField field[10][10]){
                 if(fieldd->hasBoat == 0){
                     placeBoat(field);
                     shipsToPlace--;
+                    //filling random but not with the same numbers
                     if(randfill < 10){
-                        random[randfill] = rand;
-                        randfill++;
+                        if(isInRandom(rand) == 0){
+                            random[randfill] = rand;
+                            randfill++;
+                        }else{
+                            int r = rand;
+                            while(isInRandom(r)!=1){
+                                r = punshNumbers(r);
+                            }
+                            random[randfill] = r;
+                        }
                     }
                 }else{
                   drawString((WIDTH/2)-252, (MARGIN+10), "ther is already a Boad", 0x0f, 5);  
@@ -423,6 +432,28 @@ void playerPlacment(struct GameField field[10][10]){
         rand++;
 
         uart_loadOutputFifo();
+    }
+}
+
+int isInRandom(int a){
+    //checks if nummer is in random already
+    int isit = 0;
+    for(int v = 0; v<10; v++){
+        if(random[v]==a){
+            isit = 1;
+        }
+    }
+    return isit;
+}
+
+int punshNumbers(int a){
+    //generats a new number
+    int r = 0;
+    for(int v = 0; v < a; v++){
+        r = r + 13;
+        if(r > 100){
+            r = r % 100;
+        }
     }
 }
 
