@@ -40,6 +40,7 @@ int yPos;
 int xEne;
 int yEne;
 int boats = 9;
+int eBoats = 9;
 int random[9] = {0,0,0,0,0,0,0,0,0};
 //=================================
 
@@ -256,12 +257,16 @@ void placeBoat(struct GameField field[10][10]){
     }
 }
 
-void shoot(struct GameField field[10][10]){
+void shoot(struct GameField field[10][10], int a){
 	//Sets a tile to the used ones
     if(field[xPos][yPos].wasFound == 0){
         field[xPos][yPos].wasFound = 1;
         if(isHit(field[xPos][yPos]) == 1){
-            boats--;
+            if(a == 0){
+                boats--;
+            }else{
+                eBoats--;
+            }
         }
     }else{
         drawString((WIDTH/2)-252, (MARGIN+10), "you Hit this place already", 0x0f, 5);
@@ -355,17 +360,16 @@ void enemyTurn(struct GameField field[10][10]){
     static int x = 0;
     //he just checks one field at the time
     //TO DO: make him smart
-    shoot(field);
+    shoot(field, 1);
     drawFieldColors(field[x][y],1);
     if(x==9){
         x = 0;
+        y++;
     }else{
         x++;
     }
     if(y==9){
         y = 0;
-    }else{
-        y++;
     }
 }
 
@@ -412,12 +416,15 @@ void playerPlacment(struct GameField field[10][10]){
             // additional screen output for clarity and debugging purposes
             // keyboard: c, d, e -> up
             if (ch == 's') {
+                drawRect((WIDTH/2)-252, (MARGIN + 10), WIDTH, (MARGIN + 10) , BLACK, 1);
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you went up", 0x0f, 5);
             } else if (ch == '3') {
                 // keyboard: s, d, f -> right
+                drawRect((WIDTH/2)-252, (MARGIN + 10), WIDTH, (MARGIN + 10) , BLACK, 1);
                 drawString((WIDTH/2)-252, (MARGIN+10), "you went to the right", 0x0f, 5);
             } else if (ch == 'Q') {
                 // keyboard: e, d, c -> down
+                drawRect((WIDTH/2)-252, (MARGIN + 10), WIDTH, (MARGIN + 10) , BLACK, 1);
                 drawString((WIDTH/2)-252, (MARGIN+10), "you went down", 0x0f, 5);
             } else if (ch == ';') {
                 // keyboard: t, g, b -> choose
@@ -439,13 +446,13 @@ void playerPlacment(struct GameField field[10][10]){
                         }
                     }
                 }else{
+                  drawRect((WIDTH/2)-252, (MARGIN + 10), WIDTH, (MARGIN + 10) , BLACK, 1);
                   drawString((WIDTH/2)-252, (MARGIN+10), "ther is already a Boad", 0x0f, 5);  
                 }
                 drawFieldColors(field[xPos][yPos],1);
                 drawMarginAroundField(field[xPos][yPos],10);
             } else {
-                // keyboard: f, d, s -> left
-                drawString((WIDTH/2)-252, (MARGIN+10), "input plz", 0x0f, 5);
+                //im leving this emty for now (Adrian)                
             }
         }
         
@@ -505,6 +512,7 @@ void main() {
 
     //Player can place ships
     playerPlacment(fieldOfOpponent);
+    drawBoardGame(fieldOfOpponent, offsetX + WIDTH/2, offsetY, 1);
     //The Enemy places ships
     enemyPlacement(ourField);
 
@@ -520,22 +528,20 @@ void main() {
 
     //OS loop
     while (gameStillOn) {
-    	drawString((WIDTH/2)-252, MARGIN-5, "Ships left: ", 0x0f, 3);
-    	drawChar(boats + 0x30, (WIDTH/2), MARGIN-5, 0x0f, 3); 
+        //showing how many ships there are
+    	drawString((offsetX+(2*FIELD_SIZE)), (offsetY-10), "Ships left: ", 0x0f, 3);
+    	drawChar(boats + 0x30, (offsetX+(2*FIELD_SIZE)), (offsetY-10), 0x0f, 3); 
+
+        drawString((offsetX+(2*FIELD_SIZE)), (offsetY-10), "Your Ships left: ", 0x0f, 3);
+    	drawChar(eBoats + 0x30, (offsetX + WIDTH/2+(2*FIELD_SIZE)), (offsetY-10), 0x0f, 3); 
 
         if (i == 16) {i=0;}
         wait_msec(480000); // Wait a little...
         //wait_msec(4000); // Wait a little...
 
-        drawRect(0, 0, 50, 50, colors[i], 1);
-        drawRect((HEIGHT-50), 0, HEIGHT, 0, colors[i], 1);
-        drawRect(0, (WIDTH-50), 0, WIDTH, colors[i], 1);
-        drawRect((HEIGHT-50), (WIDTH-50), HEIGHT, WIDTH, colors[i], 1);
-
         uart_writeText("1");
         
         //check for input
-        
         if ( ( ch = getUart() ) ) {
             movePointer(ourField, ch,0);
             drawChar(ch, 50, 50, 0x0f, 3);
@@ -552,10 +558,11 @@ void main() {
             } else if (ch == ';') {
                 // keyboard: t, g, b -> choose
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you choose a field", 0x0f, 5);
-                shoot(ourField);
+                shoot(ourField,0);
                 drawFieldColors(ourField[xPos][yPos],1);
                 drawMarginAroundField(ourField[xPos][yPos],10);
                 enemyTurn(fieldOfOpponent);
+                drawBoardGame(fieldOfOpponent, offsetX + WIDTH/2, offsetY, 1);
             } else if(ch == '2') {
                 // keyboard: f, d, s -> left
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 5);
@@ -565,11 +572,11 @@ void main() {
             }
         }  
         uart_loadOutputFifo();
-
+        drawFieldColors(ourField[0][0],0);
         i++;
         //check for loser
         if(loser(ourField) == 1){
-            drawString((WIDTH/2)-252, (HEIGHT/2), "GAME OVER", 0x0f, 20);
+            drawString((50), (HEIGHT/2), "GAME OVER", 0x0f, 20);
         }
         //uart_update();
     }   
