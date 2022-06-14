@@ -549,20 +549,15 @@ void main() {
             // additional screen output for clarity and debugging purposes
             // keyboard: c, d, e -> up
             if (ch == 's') {
-                drawRect((WIDTH/2)-252, (MARGIN + 10), WIDTH, (MARGIN + 10) , BLACK, 1);
-                drawString((WIDTH/2)-252, (MARGIN + 10), "You went up              ", 0x0f, 5);
+                drawString((WIDTH/2)-252, (MARGIN + 10), "You went up                       ", 0x0f, 5);
             } else if (ch == '3') {
                 // keyboard: s, d, f -> right
-                drawRect((WIDTH/2)-252, (MARGIN + 10), WIDTH, (MARGIN + 10) , BLACK, 1);
-                drawString((WIDTH/2)-252, (MARGIN + 10), "You went to the right         ", 0x0f, 5);
+                drawString((WIDTH/2)-252, (MARGIN + 10), "You went to the right                 ", 0x0f, 5);
             } else if (ch == 'Q') {
-                // keyboard: e, d, c -> down
-                drawRect((WIDTH/2)-252, (MARGIN + 10), WIDTH, (MARGIN + 10) , BLACK, 1);
-                drawString((WIDTH/2)-252, (MARGIN + 10), "You went down         ", 0x0f, 5);
+                drawString((WIDTH/2)-252, (MARGIN + 10), "You went down                 ", 0x0f, 5);
             } else if (ch == ';') {
                 // keyboard: t, g, b -> choose
-                drawRect((WIDTH/2)-252, (MARGIN + 10), WIDTH, (MARGIN + 10) , BLACK, 1);
-                drawString((WIDTH/2)-252, (MARGIN + 10), "You choose a field        ", 0x0f, 5);
+                drawString((WIDTH/2)-252, (MARGIN + 10), "You choose a field              ", 0x0f, 5);
                 shoot(ourField,0);
                 drawFieldColors(ourField[xPos][yPos],1);
                 drawMarginAroundField(ourField[xPos][yPos],10);
@@ -570,8 +565,7 @@ void main() {
                 drawBoardGame(fieldOfOpponent, offsetX + WIDTH/2, offsetY, 1);
             } else if(ch == '2') {
                 // keyboard: z, t, r -> left
-                drawRect((WIDTH/2)-252, (MARGIN + 10), WIDTH, (MARGIN + 10) , BLACK, 1);
-                drawString((WIDTH/2)-252, (MARGIN + 10), "You went to the left      ", 0x0f, 5);
+                drawString((WIDTH/2)-252, (MARGIN + 10), "You went to the left              ", 0x0f, 5);
                 
             }else{
                 //drawString((WIDTH/2)-252, (MARGIN+10), "input plz", 0x0f, 5);
