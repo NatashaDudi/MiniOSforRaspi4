@@ -537,7 +537,7 @@ void main() {
     	drawChar(boats + 0x30, (offsetX+(6*FIELD_SIZE)), (offsetY-30), 0x0f, 3); 
 
         drawString((offsetX+ WIDTH/2+(2*FIELD_SIZE)), (offsetY-30), "Your Ships left: ", 0x0f, 3);
-    	drawChar(eBoats + 0x30, (offsetX + WIDTH/2+(8*FIELD_SIZE)), (offsetY-30), 0x0f, 3); 
+    	drawChar(eBoats + 0x30, (offsetX + WIDTH/2+(7*FIELD_SIZE)), (offsetY-30), 0x0f, 3); 
 
         if (i == 16) {i=0;}
         wait_msec(4000); 
