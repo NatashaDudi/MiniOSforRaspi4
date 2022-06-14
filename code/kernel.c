@@ -565,7 +565,7 @@ void main() {
                 enemyTurn(fieldOfOpponent);
                 drawBoardGame(fieldOfOpponent, offsetX + WIDTH/2, offsetY, 1);
             } else if(ch == '2') {
-                // keyboard: f, d, s -> left
+                // keyboard: z, t, r -> left
                 drawString((WIDTH/2)-252, (MARGIN + 10), "you went to the left", 0x0f, 5);
                 
             }else{
